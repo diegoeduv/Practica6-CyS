@@ -1,30 +1,46 @@
-pkill -f keylogger.py
-if [ $? -eq 0 ]; then
-    echo "Proceso keylogger.py detenido."
+#!/usr/bin/env bash
+set -u
+
+SCRIPT_NAME="keylogger.py"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET_SCRIPT="$SCRIPT_DIR/$SCRIPT_NAME"
+
+echo "Buscando proceso $SCRIPT_NAME..."
+
+if pgrep -f "$SCRIPT_NAME" > /dev/null; then
+    pkill -f "$SCRIPT_NAME"
+    echo "Proceso $SCRIPT_NAME detenido."
 else
-    echo "No se encontró el proceso keylogger.py ejecutándose."
+    echo "No se encontró $SCRIPT_NAME ejecutándose."
 fi
 
-echo "Eliminando archivos de registro (output.txt)..."
-rm -f output.txt
-rm -f ~/output.txt
-rm -f keylog.txt
+echo "Eliminando archivos de registro..."
 
-echo "Eliminando el archivo keylogger.py..."
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-rm -f "$SCRIPT_DIR/keylogger.py"
+LOG_FILES=(
+    "output.txt"
+    "$HOME/output.txt"
+)
 
-if [ $? -eq 0 ]; then
-    echo "Archivo keylogger.py eliminado."
+for file in "${LOG_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        rm -f "$file"
+        echo "Eliminado: $file"
+    else
+        echo "No existe: $file"
+    fi
+done
+
+echo "Eliminando archivo $SCRIPT_NAME..."
+
+if [ -f "$TARGET_SCRIPT" ]; then
+    rm -f "$TARGET_SCRIPT"
+    echo "Archivo eliminado: $TARGET_SCRIPT"
 else
-    echo "No se encontró keylogger.py."
+    echo "No se encontró: $TARGET_SCRIPT"
 fi
 
-
-echo "Limpiando historial de comandos (bash history)..."
-
+# Limpiar el historial de comandos
 cat /dev/null > ~/.bash_history
 history -c 
 
-echo "Limpieza completada. El sistema está limpio."
-
+echo "Limpieza completada."

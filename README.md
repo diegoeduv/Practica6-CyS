@@ -24,7 +24,7 @@ source venv/bin/activate
 ```
 
 Ejecución del keylogger:
-sudo .venv/bin/python keylogger.py
+python keylogger.py
 
 Eliminar el rastro: 
 sudo ./Cleanup.sh

